@@ -133,8 +133,10 @@ class AroundStoreCell: BaseCollectionCell {
         /* */
         /* 썸네일 */
         thumbnailWrap.snp.makeConstraints{ make in
+            let height = aspectRatio(standardSize: 170)
             make.top.equalTo(titleWrap.snp.bottom)
-            make.leading.trailing.bottom.equalTo(0)
+            make.leading.trailing.equalTo(0)
+            make.height.equalTo(height)
         }
         thumbnailImage.snp.makeConstraints{ make in
             make.top.leading.trailing.bottom.equalTo(0)
@@ -150,7 +152,8 @@ class AroundStoreCell: BaseCollectionCell {
         storeInfoWrap.snp.makeConstraints{ make in
             let height = aspectRatio(standardSize: 43)
             make.height.equalTo(height)
-            make.leading.trailing.bottom.equalTo(0)
+            make.leading.trailing.equalTo(0)
+            make.bottom.equalTo(thumbnailWrap.snp.bottom)
         }
         storeNameGL.snp.makeConstraints{ make in
             let fontSize = aspectRatio(standardSize: 16)
