@@ -133,7 +133,7 @@ class AroundPinpliCell: BaseCollectionCell {
         ratingWrap.snp.makeConstraints{ make in
             let width = aspectRatio(standardSize: 40)
             make.top.equalTo(descriptionInfoWrap.snp.bottom)
-            make.leading.equalTo(0)
+            make.leading.bottom.equalTo(0)
             make.width.equalTo(width)
         }
         ratingGL.snp.makeConstraints{ make in
