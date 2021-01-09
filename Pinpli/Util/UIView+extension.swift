@@ -15,7 +15,7 @@ public extension UIView {
                        delay: 0,
                        options: .curveLinear,
                        animations: { [weak self] in
-                        self?.transform = CGAffineTransform.init(scaleX: 0.95, y: 0.95)
+                        self?.transform = CGAffineTransform.init(scaleX: 0.8, y: 0.8)
                        }) {  (done) in
             UIView.animate(withDuration: 0.1,
                            delay: 0,
@@ -27,5 +27,18 @@ public extension UIView {
                 completionBlock()
             }
                        }
+    }
+    
+    func setBackgroundColor(r:CGFloat,g:CGFloat,b:CGFloat,alpha:CGFloat) {
+        backgroundColor = UIColor(red: r/255, green: g/255, blue: b/255, alpha: alpha)
+    }
+    
+    //그라데이션
+    func addGradientWithColor(firstColor:UIColor,lastColor:UIColor) {
+        let gradient = CAGradientLayer()
+        gradient.frame = bounds
+        gradient.colors = [firstColor.cgColor, lastColor.cgColor]
+        
+        layer.insertSublayer(gradient, at: 0)
     }
 }
