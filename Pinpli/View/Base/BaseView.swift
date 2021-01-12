@@ -30,7 +30,10 @@ class BaseView: UIView {
         backgroundColor = .white
     }
     
-    //변경할 관계 비율
+    /// - Returns: 비율 변환 된 값
+    /// - Important: 변경할 관계 비율
+    /// - parameter direction: 관계 설정 할 방향
+    /// - parameter standardSize: 디자인 기준 사이즈
     func constraintRatio(direction:Direction,standardSize:CGFloat) -> CGFloat{
         var ratio: CGFloat = 0.0
         
@@ -49,7 +52,9 @@ class BaseView: UIView {
         return ratio
     }
     
-    //변경할 비율 (view, font)
+    /// - parameter standardSize: 디자인 기준 사이즈
+    /// - Returns: 비율 변환 된 값
+    /// - Important: 변경할 비율 사이즈 (view, font)
     func aspectRatio(standardSize:CGFloat) -> CGFloat {
         var ratio: CGFloat = 0.0
         
@@ -58,8 +63,14 @@ class BaseView: UIView {
         
         return ratio
     }
+
     
-    //컬러 간편 세팅
+    /// - parameter r: 빨강
+    /// - parameter g: 녹색
+    /// - parameter b: 파랑
+    /// - parameter alpha: 투명도
+    /// - Returns: 색 적용 된 값
+    /// - Important: 컬러 간편 세팅
     func colorSetting(r: CGFloat, g: CGFloat, b: CGFloat, alpha: CGFloat) -> UIColor {
         return UIColor(red: r/255, green: g/255, blue: b/255, alpha: alpha)
     }

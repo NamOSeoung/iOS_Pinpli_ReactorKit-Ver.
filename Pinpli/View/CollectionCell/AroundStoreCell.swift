@@ -90,7 +90,6 @@ class AroundStoreCell: BaseCollectionCell {
     }
     
     private func setup() {
-//        backgroundColor = .white
         /* 타이틀 */
         addSubview(titleWrap)
         titleWrap.addSubview(categoryGL)
@@ -173,5 +172,10 @@ class AroundStoreCell: BaseCollectionCell {
             make.trailing.equalTo(-10)
         }
         /* */
+    }
+    
+    func dataSetting(data:AroundStoreRPModelData) {
+        let categoryName:String = data.categoryName ?? ""
+        categoryGL.text = categoryName
     }
 }
