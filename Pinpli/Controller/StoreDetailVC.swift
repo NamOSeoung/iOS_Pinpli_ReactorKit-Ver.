@@ -26,7 +26,9 @@ class StoreDetailVC:BaseViewController {
         }.disposed(by: disposeBag)
         
         isReviewWrite.bind{[weak self] result in
-            print("리뷰 작성")
+            let reviewWriteVC = ReviewWriteVC()
+            reviewWriteVC.modalPresentationStyle = .fullScreen
+            self?.present(reviewWriteVC, animated: true, completion: nil)
         }.disposed(by: disposeBag)
         /* */
     }
