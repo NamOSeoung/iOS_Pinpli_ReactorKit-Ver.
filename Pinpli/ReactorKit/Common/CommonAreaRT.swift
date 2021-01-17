@@ -29,9 +29,7 @@ final class CommonAreaRT: Reactor {
         case setSecondArea([CommonAreaModel]?)
         case setAreaSearch([String]?)
         case setKakaoLocation(KakaoLocationRPModel?)
-//        case setIndicator(Bool?)
         case setErrors(Bool?)
-//        case setTimeOut(Bool?)
     }
     
     // State is a current view state(상태관리)
@@ -40,9 +38,7 @@ final class CommonAreaRT: Reactor {
         var isSecondArea:[CommonAreaModel]?
         var isAreaSearch:[String]?
         var isKakaoLocation: KakaoLocationRPModel?
-//        var isIndecator : Bool?
         var isErrors: Bool?
-//        var isTimeOut: Bool?
     }
     
     let initialState: State
