@@ -190,6 +190,7 @@ class ReviewWriteView: BaseView {
                 }
             }
         }
+        pageCtrl.currentPage = tag
         reviewContentsCV.scrollToItem(at: IndexPath(row: tag, section: 0), at: .left, animated: true)
         if tag == 0 {
             nextStepParentWrap.addSubview(nextStepWrap)
@@ -240,12 +241,14 @@ extension ReviewWriteView: UICollectionViewDelegate, UICollectionViewDataSource,
             return cell!
         }else if indexPath.row == 1 {
             let cell = (collectionView.dequeueReusableCell(withReuseIdentifier: "ReviewWriteStepCell02", for:indexPath) as? ReviewWriteStepCell02)
-            cell?.noPhotoUISetting(view: nextStepParentWrap)
+//            cell?.noPhotoUISetting(view: nextStepParentWrap)
             return cell!
         }else {
             let cell = (collectionView.dequeueReusableCell(withReuseIdentifier: "ReviewWriteStepCell03", for:indexPath) as? ReviewWriteStepCell03)
             return cell!
         }
+        
+       
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
