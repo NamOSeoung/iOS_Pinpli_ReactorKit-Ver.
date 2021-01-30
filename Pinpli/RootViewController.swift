@@ -82,7 +82,6 @@ class RootViewController: BaseViewController {
         tourBtn.snp.makeConstraints{ (make) in
             let topRatio = constraintRatio(direction: .top, standardSize: 156)
             let height = aspectRatio(standardSize: 53)
-            print(topRatio)
             make.leading.equalTo(22)
             make.trailing.equalTo(-22)
             make.height.equalTo(height)
