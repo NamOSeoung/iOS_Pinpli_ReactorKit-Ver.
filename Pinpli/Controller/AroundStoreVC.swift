@@ -24,6 +24,8 @@ class AroundStoreVC:BaseViewController,View {
         newLayer.frame = view.frame
         aroundStoreView.youtubeListWrap.layer.addSublayer(newLayer)
         reactor = aroundStoreRT
+        tabBarController?.tabBar.layer.borderWidth = 0.5
+        tabBarController?.tabBar.layer.borderColor = UIColor(red: 222/255, green: 222/255, blue: 222/255, alpha: 1).cgColor
     }
     
     func bind(reactor: AroundStoreRT) {
@@ -35,6 +37,7 @@ class AroundStoreVC:BaseViewController,View {
         let isLocationDenined = aroundStoreView.locationDenined.filter{$0}
         let isCurrentLocation = aroundStoreView.currentLocation.filter{$0 != nil} //현재 좌표 Observe
         let isStoreEvent = aroundStoreView.storeEvent.filter{$0}
+        let isReviewMoreEvent = aroundStoreView.reviewMoreEvent.filter{$0 != nil}.map{$0 ?? 0}
         
         isLocationDenined
             .bind{[weak self] result in
@@ -58,6 +61,12 @@ class AroundStoreVC:BaseViewController,View {
                 self?.navigationController?.pushViewController(storeDetailVC, animated: true)
             }.disposed(by: disposeBag)
         
+        isReviewMoreEvent
+            .bind{[weak self] result in
+                let reviewMoreListVC = ReviewMoreListVC()
+                reviewMoreListVC.reviewGubun = result
+                self?.navigationController?.pushViewController(reviewMoreListVC, animated: true)
+            }.disposed(by: disposeBag)
         /* */
         
         /* reactor Action*/
