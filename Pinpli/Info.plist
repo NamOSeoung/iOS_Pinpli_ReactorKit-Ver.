@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>프로필 설정 시 이미지 첨부</string>
+	<key>NSCameraUsageDescription</key>
+	<string>프로필 설정 시 사진촬영</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -30,7 +34,7 @@
 		<true/>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>'핀플리’ 앱은 사용자의 보다 정확한
+	<string>&apos;핀플리’ 앱은 사용자의 보다 정확한
 맛집 위치 파악을 위해 사용자의 위치정보를
 필요로 합니다.</string>
 	<key>UIApplicationSceneManifest</key>
