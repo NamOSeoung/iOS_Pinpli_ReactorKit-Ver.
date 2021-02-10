@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import RxCocoa
 
 //1:1문의 탭
 class QuestionView: BaseView {
