@@ -21,6 +21,10 @@ extension ObservableType {
                 )
             }
             
+            let json = try? JSONSerialization.jsonObject(with: jsonData, options: [])
+            //json데이터print해서 볼 수 있도록 조치.
+            print("returnData:\(json)")
+            
             let decoder = JSONDecoder()
             let object = try decoder.decode(T.self, from: jsonData)
         
