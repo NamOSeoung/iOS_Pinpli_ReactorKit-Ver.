@@ -27,37 +27,19 @@ class PinReviewVC:BaseViewController {
         
         //로그인이 되어있지 않을경우에만 호출 - 우선 주석 처리
         pinReviewView.logoutViewSetting(logoutView: logoutView)
-//        pinReviewView.allBtn.addTarget(self, action: #selector(didTappedFullSizeBtn), for: .touchUpInside)
-//        reviewIsEmpty()
+        
+        let isGoLoginEvent = logoutView.goLoginEvent.filter{$0}
+        isGoLoginEvent.bind{[weak self] result in
+            self?.goLogin()
+        }.disposed(by: disposeBag)
     }
-//    
-//    //리뷰 없음
-//    func reviewIsEmpty() {
-//        pinReviewView.contentsView.addSubview(pinReviewIsEmptyView.reviewIsEmptyContentsGL)
-//        pinReviewView.contentsView.addSubview(pinReviewIsEmptyView.reviewIsEmptyGL01)
-//        pinReviewView.contentsView.addSubview(pinReviewIsEmptyView.reviewIsEmptyGL02)
-//        
-//        pinReviewIsEmptyView.reviewIsEmptyContentsGL.snp.makeConstraints{ make in
-//            make.centerX.centerY.equalTo(pinReviewView)
-//        }
-//        
-//        pinReviewIsEmptyView.reviewIsEmptyGL01.snp.makeConstraints{ make in
-//            make.centerX.equalTo(pinReviewIsEmptyView.reviewIsEmptyContentsGL)
-//            make.bottom.equalTo(pinReviewIsEmptyView.reviewIsEmptyContentsGL.snp.top).offset(-20)
-//        }
-//        
-//        pinReviewIsEmptyView.reviewIsEmptyGL02.snp.makeConstraints{ make in
-//            make.top.equalTo(pinReviewIsEmptyView.reviewIsEmptyContentsGL.snp.bottom).offset(20)
-//            make.centerX.equalTo(pinReviewIsEmptyView.reviewIsEmptyContentsGL)
-//        }
-//    }
-//    
-//    @objc private func didTappedFullSizeBtn(_ sender: UIButton) {
-//        sender.showAnimation { [weak self] in
-//            print("asdkmaslkdklaskdklas")
-////            if let aroundStoreVC = self?.storyboard?.instantiateViewController(withIdentifier: "ServiceRootNavigation"){
-////                self?.present(aroundStoreVC, animated: true, completion: nil)
-////            }
-//        }
-//    }
+    
+    //로그인 하러가기 메인으로 이동
+    func goLogin(){
+        //root초기화
+        let storyboard = UIStoryboard.init(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "RootVC") as! RootVC
+    
+        UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController = vc
+    }
 }
