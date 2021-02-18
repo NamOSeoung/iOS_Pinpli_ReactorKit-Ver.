@@ -6,9 +6,12 @@
 //
 
 import UIKit
-
+import MGStarRatingView
 //리뷰 작성화면 첫 번재 스탭  CollectionCell
-class ReviewWriteStepCell01: BaseCollectionCell {
+class ReviewWriteStepCell01: BaseCollectionCell,StarRatingDelegate {
+    func StarRatingValueChanged(view: StarRatingView, value: CGFloat) {
+        
+    }
     lazy var titleWrap:UIView = {
         let view = UIView()
         return view
@@ -28,8 +31,13 @@ class ReviewWriteStepCell01: BaseCollectionCell {
         label.font = UIFont(name: "AppleSDGothicNeo-Regular", size: 14)
         label.numberOfLines = 2
         label.textAlignment = .left
-        label.setLinespace(spacing: 5)
+        label.setLinespace(spacing: 3)
         return label
+    }()
+    
+    lazy var starView:StarRatingView = {
+        let view = StarRatingView()
+        return view
     }()
 
     override init(frame: CGRect) {
@@ -48,6 +56,7 @@ class ReviewWriteStepCell01: BaseCollectionCell {
         /* 타이틀 이미지 */
         addSubview(titleGL)
         addSubview(reviewWriteGL)
+        addSubview(starView)
 //        titleWrap.addSubview(titleGL)
         /* */
     }
@@ -69,6 +78,27 @@ class ReviewWriteStepCell01: BaseCollectionCell {
             make.trailing.equalTo(-22)
             make.top.equalTo(titleGL.snp.bottom).offset(topRatio)
             reviewWriteGL.font = reviewWriteGL.font.withSize(fontSize)
+        }
+        starView.snp.makeConstraints{ make in
+            let topRatio = constraintRatio(direction: .top, standardSize: 116)
+            let height = aspectRatio(standardSize: 33)
+            let width = aspectRatio(standardSize: 31)
+            let spacing = aspectRatio(standardSize: 13)
+            make.centerX.equalToSuperview()
+            make.top.equalTo(reviewWriteGL.snp.bottom).offset(topRatio)
+            make.height.equalTo(height)
+            
+            let attribute = StarRatingAttribute(type: .rate,
+                                                point: width,
+                                                spacing: spacing,
+                                                emptyColor: .clear,
+                                                fillColor: UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 1.0),
+                                                emptyImage: UIImage(named: "star_empty_24px"),
+                                                fillImage: UIImage(named: "star_fill_24px"))
+            starView.configure(attribute, current: 0, max: 5)
+            
+            starView.delegate = self
+            starView.current = 0.0
         }
     }
 }

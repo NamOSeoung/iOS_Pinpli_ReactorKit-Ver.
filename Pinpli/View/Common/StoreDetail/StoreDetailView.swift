@@ -75,7 +75,6 @@ class StoreDetailView: BaseView {
     
     lazy var backBtnWrap:UIView = {
         let view = UIView()
-        
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backEvent(_:))))
         return view
     }()
@@ -262,6 +261,9 @@ class StoreDetailView: BaseView {
     
     var backEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
     var reviewWriteEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
+    var callEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
+    var copyAddressEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
+    var shareEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
     weak var headerViewHeightConstraint: NSLayoutConstraint!
     weak var headerGradientViewHeightConstraint:NSLayoutConstraint!
     var viewHeightConstraint: Constraint!
@@ -291,6 +293,69 @@ class StoreDetailView: BaseView {
     lazy var pinpliLogo:UIImageView = ReviewCommonView().reviewLogo
     lazy var pinpliTitleGL:UILabel = ReviewCommonView().reviewTitleGL
     lazy var pinpliReviewIsEmptyGL:UILabel = ReviewCommonView().reviewIsEmptyGL
+    
+    lazy var bottomViewWrap:UIView = {
+        let view = UIView()
+        view.setBackgroundColor(r: 0, g: 0, b: 0, alpha: 1)
+        return view
+    }()
+    lazy var bottomPhoneWrap:UIView = {
+        let view = UIView()
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(phoneCall(_:))))
+        return view
+    }()
+    lazy var bottomPhoneGL:UILabel = {
+        let label = UILabel()
+        label.text = "전화 걸기"
+        label.font = UIFont(name: "AppleSDGothicNeo-SemiBold", size: 16)
+        label.colorSetting(r: 255, g: 255, b: 255, alpha: 1)
+        label.textAlignment = .center
+        return label
+    }()
+    lazy var bottomCopyWrap:UIView = {
+        let view = UIView()
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(copyAddress(_:))))
+        return view
+    }()
+    lazy var bottomCopyGL:UILabel = {
+        let label = UILabel()
+        label.text = "주소 복사"
+        label.font = UIFont(name: "AppleSDGothicNeo-SemiBold", size: 16)
+        label.colorSetting(r: 255, g: 255, b: 255, alpha: 1)
+        label.textAlignment = .center
+        return label
+    }()
+    lazy var bottomShareWrap:UIView = {
+        let view = UIView()
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(share(_:))))
+        return view
+    }()
+    lazy var bottomShareGL:UILabel = {
+        let label = UILabel()
+        label.text = "공유하기"
+        label.font = UIFont(name: "AppleSDGothicNeo-SemiBold", size: 16)
+        label.colorSetting(r: 255, g: 255, b: 255, alpha: 1)
+        label.textAlignment = .center
+        return label
+    }()
+    
+    lazy var bottomLeftBar:UIView = {
+        let view = UIView()
+        view.setBackgroundColor(r: 255, g: 255, b: 255, alpha: 1)
+        return view
+    }()
+    
+    lazy var bottomRightBar:UIView = {
+        let view = UIView()
+        view.setBackgroundColor(r: 255, g: 255, b: 255, alpha: 1)
+        return view
+    }()
+    
+    lazy var copyAlertWrap:UIView = {
+        let view = UIView()
+        view.setBackgroundColor(r: 0, g: 0, b: 0, alpha: 0.8)
+        return view
+    }()
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
@@ -371,6 +436,15 @@ class StoreDetailView: BaseView {
         pinpliReviewWriteWrap.addSubview(pinpliReviewWriteGL)
         /* */
 
+        addSubview(bottomViewWrap)
+        bottomViewWrap.addSubview(bottomPhoneWrap)
+        bottomViewWrap.addSubview(bottomCopyWrap)
+        bottomViewWrap.addSubview(bottomShareWrap)
+        bottomPhoneWrap.addSubview(bottomLeftBar)
+        bottomPhoneWrap.addSubview(bottomPhoneGL)
+        bottomCopyWrap.addSubview(bottomRightBar)
+        bottomCopyWrap.addSubview(bottomCopyGL)
+        bottomShareWrap.addSubview(bottomShareGL)
     }
     
     func autoLayout() {
@@ -757,7 +831,7 @@ class StoreDetailView: BaseView {
             make.leading.trailing.bottom.equalToSuperview()
         }
         pinpliReviewIsEmptyWrap.snp.makeConstraints{ make in
-            let height = aspectRatio(standardSize: 232)
+            let height = aspectRatio(standardSize: 262)
             make.top.equalTo(tistoryReviewIsEmptyWrap.snp.bottom)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(height)
@@ -806,11 +880,82 @@ class StoreDetailView: BaseView {
             pinpliReviewWriteGL.font = pinpliReviewWriteGL.font.withSize(fontSize)
         }
         /* */
+        
+        bottomViewWrap.snp.makeConstraints{ make in
+            let height = aspectRatio(standardSize: 83)
+            make.height.equalTo(height)
+            make.leading.bottom.trailing.equalToSuperview()
+        }
+        
+        bottomPhoneWrap.snp.makeConstraints{ make in
+            make.leading.top.bottom.equalToSuperview()
+        }
+        bottomCopyWrap.snp.makeConstraints{ make in
+            make.leading.equalTo(bottomPhoneWrap.snp.trailing)
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(bottomPhoneWrap)
+        }
+        bottomShareWrap.snp.makeConstraints{ make in
+            make.leading.equalTo(bottomCopyWrap.snp.trailing)
+            make.top.bottom.trailing.equalToSuperview()
+            make.width.equalTo(bottomCopyWrap)
+        }
+        
+        
+        bottomPhoneGL.snp.makeConstraints{ make in
+            let fontSize = aspectRatio(standardSize: 16)
+            let topRatio = constraintRatio(direction: .top, standardSize: 20)
+            bottomPhoneGL.font = bottomPhoneGL.font.withSize(fontSize)
+            make.top.equalTo(topRatio)
+            make.leading.trailing.equalToSuperview()
+        }
+        bottomCopyGL.snp.makeConstraints{ make in
+            let fontSize = aspectRatio(standardSize: 16)
+            let topRatio = constraintRatio(direction: .top, standardSize: 20)
+            bottomCopyGL.font = bottomCopyGL.font.withSize(fontSize)
+            make.top.equalTo(topRatio)
+            make.leading.trailing.equalToSuperview()
+        }
+        bottomShareGL.snp.makeConstraints{ make in
+            let fontSize = aspectRatio(standardSize: 16)
+            let topRatio = constraintRatio(direction: .top, standardSize: 20)
+            bottomShareGL.font = bottomShareGL.font.withSize(fontSize)
+            make.top.equalTo(topRatio)
+            make.leading.trailing.equalToSuperview()
+        }
+        
+        bottomLeftBar.snp.makeConstraints{ make in
+            make.trailing.equalToSuperview()
+            make.top.equalTo(8)
+            make.bottom.equalTo(-8)
+            make.width.equalTo(0.3)
+        }
+        bottomRightBar.snp.makeConstraints{ make in
+            make.trailing.equalToSuperview()
+            make.top.equalTo(8)
+            make.bottom.equalTo(-8)
+            make.width.equalTo(0.3)
+        }
     }
     
     @objc private func didTappedFullSizeBtn(_ sender: UIButton) {
         sender.showAnimation { [weak self] in
             
+        }
+    }
+    @objc private func phoneCall(_ gesture:UITapGestureRecognizer) {
+        gesture.view?.showAnimation { [weak self] in
+            self?.callEvent.accept(true)
+        }
+    }
+    @objc private func copyAddress(_ gesture:UITapGestureRecognizer) {
+        gesture.view?.showAnimation { [weak self] in
+            self?.copyAddressEvent.accept(true)
+        }
+    }
+    @objc private func share(_ gesture:UITapGestureRecognizer) {
+        gesture.view?.showAnimation { [weak self] in
+            self?.shareEvent.accept(true)
         }
     }
     @objc private func backEvent(_ gesture:UITapGestureRecognizer) {
@@ -868,6 +1013,16 @@ class StoreDetailView: BaseView {
         gradientView?.addGradientWithColor(firstColor: UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 1), lastColor: UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0))
         gradientView?.clipsToBounds = false
         headerGradientWrap.addSubview(gradientView!)
+    }
+    
+    func copyAddressSuccess() {
+        for view in subviews {
+            if view == copyAlertWrap {
+                view.removeFromSuperview()
+            }
+        }
+        
+        addSubview(copyAlertWrap)
     }
 }
 

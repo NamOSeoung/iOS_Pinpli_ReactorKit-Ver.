@@ -157,7 +157,8 @@ class AroundStoreView: BaseView {
     //유튜브 더보기 감싸는 뷰
     lazy var youtubeMoreWrap:UIView = {
         let view = UIView()
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(check(_:))))
+        view.tag = 0
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(reviewMore(_:))))
         return view
     }()
     
@@ -199,7 +200,8 @@ class AroundStoreView: BaseView {
     //네이버 더보기 감싸는 뷰
     lazy var naverMoreWrap:UIView = {
         let view = UIView()
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(check(_:))))
+        view.tag = 1
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(reviewMore(_:))))
         return view
     }()
     
@@ -258,7 +260,8 @@ class AroundStoreView: BaseView {
     //티스토리 더보기 감싸는 뷰
     lazy var tistoryMoreWrap:UIView = {
         let view = UIView()
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(check(_:))))
+        view.tag = 2
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(reviewMore(_:))))
         return view
     }()
     
@@ -317,7 +320,8 @@ class AroundStoreView: BaseView {
     //핀플리 더보기 감싸는 뷰
     lazy var pinpliMoreWrap:UIView = {
         let view = UIView()
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(check(_:))))
+        view.tag = 3
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(reviewMore(_:))))
         return view
     }()
     
@@ -352,6 +356,7 @@ class AroundStoreView: BaseView {
     var locationDenined:BehaviorRelay<Bool> = BehaviorRelay.init(value: false) //현재 위치 권한체크
     var currentLocation:BehaviorRelay<(x:Double, y:Double)?> = BehaviorRelay.init(value: nil) //현재 좌표
     var storeEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)//상점 클릭 이벤트
+    var reviewMoreEvent:BehaviorRelay<Int?> = BehaviorRelay.init(value: nil) //리뷰 더보기 이벤트
     
     var dummyList:[String] = ["1","2","3","4","1","2","3","4","1","2","3","4"]
     var storeList:[AroundStoreRPModelData] = [] {
@@ -740,7 +745,6 @@ class AroundStoreView: BaseView {
    
     //gps 퍼미션 체크
     func requestGPSPermission(){
-        
         switch CLLocationManager.authorizationStatus() {
         case .authorizedAlways, .authorizedWhenInUse:
             guard let locationValue: CLLocationCoordinate2D = locationManager.location?.coordinate else { return }
@@ -771,6 +775,14 @@ class AroundStoreView: BaseView {
     @objc private func check(_ gesture: UITapGestureRecognizer) {
         gesture.view?.showAnimation { [weak self] in
             
+        }
+    }
+    
+    @objc private func reviewMore(_ gesture: UITapGestureRecognizer) {
+        if let tag = gesture.view?.tag {
+            gesture.view?.showAnimation { [weak self] in
+                self?.reviewMoreEvent.accept(tag)
+            }
         }
     }
 }

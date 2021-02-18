@@ -18,7 +18,6 @@ class BlackListView: BaseView {
     lazy var youtubeWrap:UIView = {
         let view = UIView()
         view.tag = 0
-//        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(reviewTab(_:))))
         return view
     }()
     lazy var youtubeLogoImage:UIImageView = {
@@ -29,7 +28,6 @@ class BlackListView: BaseView {
     lazy var naverWrap:UIView = {
         let view = UIView()
         view.tag = 1
-//        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(reviewTab(_:))))
         return view
     }()
     lazy var naverLogoImage:UIImageView = {
@@ -40,7 +38,6 @@ class BlackListView: BaseView {
     lazy var tistoryWrap:UIView = {
         let view = UIView()
         view.tag = 2
-//        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(reviewTab(_:))))
         return view
     }()
     lazy var tistoryLogoImage:UIImageView = {
@@ -77,10 +74,8 @@ class BlackListView: BaseView {
     }()
     lazy var writerWrap:UIView = {
         let view = UIView()
-//        let cornerRadius = aspectRatio(standardSize: 44)/2
-//        view.layer.cornerRadius = cornerRadius
+        view.tag = 3
         view.backgroundColor = .clear
-//        view.setBackgroundColor(r: 0, g: 0, b: 0, alpha: 1)
         return view
     }()
     lazy var writerGL:UILabel = {
@@ -93,6 +88,7 @@ class BlackListView: BaseView {
     }()
     lazy var postWrap:UIView = {
         let view = UIView()
+        view.tag = 4
         view.backgroundColor = .clear
         return view
     }()

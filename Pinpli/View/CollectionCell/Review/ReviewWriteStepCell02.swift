@@ -25,21 +25,23 @@ class ReviewWriteStepCell02: BaseCollectionCell {
     }()
     lazy var addPhotoBtn:UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "add_btn_photo"), for: .normal)
+        button.setImage(UIImage(named: "btn_add_photo"), for: .normal)
         return button
     }()
     lazy var noPhotoWrap:UIView = {
         let view = UIView()
-        view.backgroundColor = .darkGray
         return view
     }()
     lazy var noPhotoGL:UILabel = {
         let label = UILabel()
         label.text = "사진은 안찍었어요"
+        label.textAlignment = .center
+        label.colorSetting(r: 189, g: 189, b: 189, alpha: 1)
         return label
     }()
     lazy var noPhotoBottom:UIView = {
         let view = UIView()
+        view.setBackgroundColor(r: 189, g: 189, b: 189, alpha: 1)
         return view
     }()
     override init(frame: CGRect) {
@@ -53,15 +55,12 @@ class ReviewWriteStepCell02: BaseCollectionCell {
         setup()
         bindConstraints()
     }
-//    let reviewWriteView = ReviewWriteView()
     
     private func setup() {
         /* 타이틀 이미지 */
         addSubview(titleGL)
         addSubview(addPhotoBtn)
-        addSubview(noPhotoWrap)
-        noPhotoWrap.addSubview(noPhotoGL)
-        noPhotoWrap.addSubview(noPhotoBottom)
+        
         /* */
     }
     
@@ -88,14 +87,35 @@ class ReviewWriteStepCell02: BaseCollectionCell {
         /* */
        
     }
-    func noPhotoUISetting(view:UIView) {
+    func noPhotoUISetting(x:CGFloat) {
+        for view in subviews {
+            if view == noPhotoWrap {
+                for child in view.subviews {
+                    child.removeFromSuperview()
+                }
+            }
+        }
+        
+        addSubview(noPhotoWrap)
+        noPhotoWrap.addSubview(noPhotoGL)
+        noPhotoWrap.addSubview(noPhotoBottom)
         /* 사진 없음 */
         noPhotoWrap.snp.makeConstraints{ make in
             let bottomRatio = constraintRatio(direction: .bottom, standardSize: 40)
             let height = aspectRatio(standardSize: 24)
-            make.bottom.equalTo(view.snp.top).offset(-bottomRatio)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(height)
+            make.bottom.equalToSuperview().offset(-(x+bottomRatio))
+        }
+        noPhotoGL.snp.makeConstraints{ make in
+            make.top.bottom.equalToSuperview()
+            make.centerX.equalToSuperview()
+        }
+        noPhotoBottom.snp.makeConstraints{ make in
+            make.bottom.equalToSuperview()
+            make.width.equalTo(noPhotoGL)
+            make.leading.equalTo(noPhotoGL)
+            make.height.equalTo(1)
         }
         /* */
     }

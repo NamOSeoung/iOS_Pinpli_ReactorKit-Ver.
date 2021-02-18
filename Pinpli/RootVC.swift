@@ -6,8 +6,7 @@
 //
 
 import UIKit
-import KakaoSDKAuth
-import KakaoSDKUser
+import KakaoModule
 
 class RootVC: BaseViewController {
     
@@ -36,39 +35,41 @@ class RootVC: BaseViewController {
     }
     
     private func kakaoLogin() {
-        
-        // 카카오톡 설치 여부 확인
-        if (AuthApi.isKakaoTalkLoginAvailable()) {
-            //카카오톡 앱으로 로그인
-            AuthApi.shared.loginWithKakaoTalk {(oauthToken, error) in
-                if let error = error {
-                    print(error)
-                }
-                else {
-                    //do something
-                    _ = oauthToken
-                    let oauthProvider:String = "KAKAO"
-                    if let oauthToken:String = oauthToken?.accessToken {
-                        //                        result(SignInRQModel(oauth_provider: oauthProvider, oauth_token: oauthToken, user_id: nil, nickname: nil, birth: nil, gender: nil, address: nil))
-                        
-                    }
-                }
-            }
-        }else { //카카오톡 웹뷰 계정으로 로그인
-            AuthApi.shared.loginWithKakaoAccount {(oauthToken, error) in
-                if let error = error {
-                    print(error)
-                }
-                else {
-                    //do something
-                    _ = oauthToken
-                    
-                    let oauthProvider:String = "KAKAO"
-                    if let oauthToken:String = oauthToken?.accessToken {
-                        //                        result(SignInRQModel(oauth_provider: oauthProvider, oauth_token: oauthToken, user_id: nil, nickname: nil, birth: nil, gender: nil, address: nil))
-                    }
-                }
-            }
-        }
+        let aa = KakaoLogin()
+        aa.login()
+//
+//        // 카카오톡 설치 여부 확인
+//        if (AuthApi.isKakaoTalkLoginAvailable()) {
+//            //카카오톡 앱으로 로그인
+//            AuthApi.shared.loginWithKakaoTalk {(oauthToken, error) in
+//                if let error = error {
+//                    print(error)
+//                }
+//                else {
+//                    //do something
+//                    _ = oauthToken
+//                    let oauthProvider:String = "KAKAO"
+//                    if let oauthToken:String = oauthToken?.accessToken {
+//                        //                        result(SignInRQModel(oauth_provider: oauthProvider, oauth_token: oauthToken, user_id: nil, nickname: nil, birth: nil, gender: nil, address: nil))
+//
+//                    }
+//                }
+//            }
+//        }else { //카카오톡 웹뷰 계정으로 로그인
+//            AuthApi.shared.loginWithKakaoAccount {(oauthToken, error) in
+//                if let error = error {
+//                    print(error)
+//                }
+//                else {
+//                    //do something
+//                    _ = oauthToken
+//
+//                    let oauthProvider:String = "KAKAO"
+//                    if let oauthToken:String = oauthToken?.accessToken {
+//                        //                        result(SignInRQModel(oauth_provider: oauthProvider, oauth_token: oauthToken, user_id: nil, nickname: nil, birth: nil, gender: nil, address: nil))
+//                    }
+//                }
+//            }
+//        }
     }
 }

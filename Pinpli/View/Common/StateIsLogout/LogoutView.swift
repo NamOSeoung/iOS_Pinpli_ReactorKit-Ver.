@@ -36,10 +36,11 @@ class LogoutView: BaseView {
         button.setTitleColor(r: 255, g: 255, b: 255, alpha: 1, ctrl: .normal)
         button.setBackgroundColor(r: 0, g: 0, b: 0, alpha: 1)
         button.titleLabel?.font = UIFont(name: "AppleSDGothicNeo-SemiBold", size: 16)
-        button.addTarget(self, action: #selector(didTappedFullSizeBtn), for: .touchUpInside)
+        button.addTarget(self, action: #selector(goLoginClickEvent), for: .touchUpInside)
         return button
     }()
     
+    var goLoginEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -49,9 +50,9 @@ class LogoutView: BaseView {
         super .init(frame: frame)
     }
     
-    @objc private func didTappedFullSizeBtn(_ sender: UIButton) {
+    @objc private func goLoginClickEvent(_ sender: UIButton) {
         sender.showAnimation { [weak self] in
-            
+            self?.goLoginEvent.accept(true)
         }
     }
 }

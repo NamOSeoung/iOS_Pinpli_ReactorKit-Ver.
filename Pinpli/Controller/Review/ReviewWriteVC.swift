@@ -1,105 +1,37 @@
 //
-//  MyInfoVC.swift
+//  ReviewWriteVC.swift
 //  Pinpli
 //
-//  Created by 남오승 on 2020/12/25.
+//  Created by 남오승 on 2021/01/12.
 //
 
 import UIKit
-import SnapKit
 import Photos
 import TLPhotoPicker
 import Mantis
-import RxSwift
 
-//내정보
-class MyPageVC:BaseViewController {
-    
-    let myPageLoginView = MyPageLoginView() //로그인 했을 시
-    let myPageLogoutView = MyPageLogoutView() //로그인 안 했을 시
+//리뷰 작성
+class ReviewWriteVC: BaseViewController {
+    let reviewWriteView = ReviewWriteView()
     var selectedAssets = [TLPHAsset]()
     var image:UIImage?
     var croppedImage:UIImage?
     var imageManager = PHCachingImageManager() //앨범에서 사진 받아오기 위한 객체
     
     override func viewDidLoad() {
-        super.viewDidLoad()
-//        view = myPageLogoutView
-        view = myPageLoginView
+        view = reviewWriteView
         
         /* UIEvent */
-        let isProfileEditEvent = myPageLoginView.profileEditEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        let isNickNameEditEvent = myPageLoginView.nickNameEditEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        let isMyInfoEvent = myPageLoginView.myInfoEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
+        let backEvent = reviewWriteView.backEvent.filter{$0}
+        let imageSelectEvent = reviewWriteView.imageSelectEvent.filter{$0}
+        backEvent.bind{[weak self] result in
+            self?.dismiss(animated: true, completion: nil)
+        }.disposed(by: disposeBag)
         
-        let isMyReviewEvent = myPageLoginView.myReviewEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        let isBlackListEvent = myPageLoginView.blackListEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        let isQuestionEvent = myPageLoginView.questionEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        let isCommonSettingsEvent = myPageLoginView.commonSettngsEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        
-        let isServiceTermsEvent = myPageLoginView.serviceTermsEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        let isPrivacyTermsEvent = myPageLoginView.privacyTermsEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        let isFaqEvent = myPageLoginView.faqEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        let isNoticeEvent = myPageLoginView.noticeEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        
-        let isQnaDeleteEvent = myPageLoginView.qnaDeleteEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        let isQuestionWriteEvent = myPageLoginView.questionWriteEvent.filter{$0}.observeOn(MainScheduler.asyncInstance)
-        
-        isProfileEditEvent.bind{[weak self] result in
+        imageSelectEvent.bind{[weak self] result in
             self?.albumCallEvent()
         }.disposed(by: disposeBag)
-
-        isNickNameEditEvent.bind{[weak self] result in
-            let nickNameEditVC = NickNameEditVC()
-            nickNameEditVC.modalPresentationStyle = .fullScreen
-            self?.present(nickNameEditVC, animated: true, completion: nil)
-        }.disposed(by: disposeBag)
-        
-        isMyInfoEvent.bind{[weak self] result in
-            let myInfoVC = MyInfoVC()
-            self?.navigationController?.pushViewController(myInfoVC, animated: true)
-        }.disposed(by: disposeBag)
-        
-        isMyReviewEvent.bind{[weak self] result in
-            self?.myReviewEvent()
-        }.disposed(by: disposeBag)
-        
-        isBlackListEvent.bind{[weak self] result in
-            self?.blackListEvent()
-        }.disposed(by: disposeBag)
-        
-        isQuestionEvent.bind{[weak self] result in
-            self?.questionEvent()
-        }.disposed(by: disposeBag)
-        
-        isCommonSettingsEvent.bind{[weak self] result in
-            self?.commonSettingsEvent()
-        }.disposed(by: disposeBag)
-        
-        isServiceTermsEvent.bind{[weak self] result in
-            self?.commonSetingsMenuEvent(index: 0)
-        }.disposed(by: disposeBag)
-        isPrivacyTermsEvent.bind{[weak self] result in
-            self?.commonSetingsMenuEvent(index: 1)
-        }.disposed(by: disposeBag)
-        isFaqEvent.bind{[weak self] result in
-            self?.commonSetingsMenuEvent(index: 2)
-        }.disposed(by: disposeBag)
-        isNoticeEvent.bind{[weak self] result in
-            self?.commonSetingsMenuEvent(index: 3)
-        }.disposed(by: disposeBag)
-        
-        isQnaDeleteEvent.bind{[weak self] result in
-            self?.qnaDeleteAlert()
-        }.disposed(by: disposeBag)
-        
-        isQuestionWriteEvent.bind{[weak self] result in
-            let questionWriteVC = QuestionWriteVC()
-            questionWriteVC.modalPresentationStyle = .fullScreen
-            self?.present(questionWriteVC, animated: true, completion: nil)
-        }.disposed(by: disposeBag)
         /* */
-
     }
     
     func albumCallEvent() {
@@ -249,13 +181,15 @@ class MyPageVC:BaseViewController {
         viewController.delegate = self
         var configure = TLPhotosPickerConfigure() //커스텀
         
+        
         configure.cancelTitle = "취소"
         configure.doneTitle = "완료"
         configure.emptyMessage = "앨범이 없습니다."
         configure.allowedVideo = false
         configure.allowedVideoRecording = false
         configure.allowedLivePhotos = false
-        configure.singleSelectedMode = true
+        configure.maxSelectedAssets = 4 //4개까지 선택가능
+        configure.singleSelectedMode = false //한개 선택모드 여부
         configure.tapHereToChange = "앨범 변경"
         configure.selectedColor = UIColor(red: 253/255, green: 177/255, blue: 75/255, alpha: 1.0)
         viewController.configure = configure
@@ -289,106 +223,15 @@ class MyPageVC:BaseViewController {
         
       
     }
-    
-    //내 리뷰 탭
-    func myReviewEvent() {
-        myPageLoginView.contentsSetting(tabGubun: 0)
-    }
-    
-    //블랙리스트 탭
-    func blackListEvent() {
-        myPageLoginView.contentsSetting(tabGubun: 1)
-    }
-    
-    //1:1문의 탭
-    func questionEvent() {
-        myPageLoginView.contentsSetting(tabGubun: 2)
-    }
-    
-    //일반 설정 탭
-    func commonSettingsEvent() {
-        myPageLoginView.contentsSetting(tabGubun: 3)
-    }
-    
-    //일반설정 메뉴 이동
-    func commonSetingsMenuEvent(index:Int) {
-        if index == 0 { //서비스 이용약관
-            let termsVC = TermsVC()
-            termsVC.termsGubun = 0
-            termsVC.modalPresentationStyle = .overCurrentContext
-            present(termsVC, animated: false, completion: nil)
-        }else if index == 1 { //개인정보 처리방침
-            let termsVC = TermsVC()
-            termsVC.termsGubun = 1
-            termsVC.modalPresentationStyle = .overCurrentContext
-            present(termsVC, animated: false, completion: nil)
-        }else if index == 2 { //자주하는 질문
-            let noticeFAQVC = NoticeFAQVC()
-            noticeFAQVC.gubun = false
-            navigationController?.pushViewController(noticeFAQVC, animated: true)
-        }else { //공지사항
-            let noticeFAQVC = NoticeFAQVC()
-            noticeFAQVC.gubun = true
-            navigationController?.pushViewController(noticeFAQVC, animated: true)
-        }
-    }
-    
-    //qna삭제 팝업
-    func qnaDeleteAlert() {
-        let alert = UIAlertController(title: "작성한 문의를 삭제할까요?", message: "\n삭제하게 된다면 소중한 문의를\n다시 찾아볼 수 없어요 :(", preferredStyle: .alert)
-
-        alert.setValue(NSAttributedString(string: alert.title!, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.semibold), NSAttributedString.Key.foregroundColor : UIColor.black]), forKey: "attributedTitle")
-    
-        alert.setValue(NSAttributedString(string: alert.message!, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 13,weight: UIFont.Weight.regular),NSAttributedString.Key.foregroundColor :UIColor.black]), forKey: "attributedMessage")
-
-        let subview = (alert.view.subviews.first?.subviews.first?.subviews.first!)! as UIView
-        
-        alert.addAction(UIAlertAction(title: "삭제하기", style: .default, handler: { [weak self] (action:UIAlertAction!) in
-            self?.myPageLoginView.questionView.reviewDeletePop()
-        }))
-        alert.addAction(UIAlertAction(title: "취소하기", style: .cancel, handler: { (action:UIAlertAction!) in }))
-  
-        subview.backgroundColor = UIColor.white
-        present(alert, animated: true)
-    }
 }
 
-
-//이미지 호출 후 크롭하기위한 extension
-extension MyPageVC: TLPhotosPickerViewControllerDelegate, CropViewControllerDelegate {
-    func cropViewControllerDidCrop(_ cropViewController: CropViewController, cropped: UIImage) {
-//        if let reactor = self.reactor {
-            croppedImage = cropped
-            print(cropped)
-        myPageLoginView.profileImage.image = cropped
-//            reactor.action.onNext(.imageUpload(profileImage: cropped))
-//        }
-    }
+extension ReviewWriteVC: TLPhotosPickerViewControllerDelegate {
     
     //TLPhotosPickerViewControllerDelegate
     func shouldDismissPhotoPicker(withTLPHAssets: [TLPHAsset]) -> Bool {
         // use selected order, fullresolution image
         selectedAssets = withTLPHAssets
         return true
-    }
-    
-    func dismissPhotoPicker(withPHAssets: [PHAsset]) {
-        if withPHAssets.count > 0 {
-            self.imageManager.requestImage(for: withPHAssets[0], targetSize: .zero, contentMode: .aspectFill, options: nil, resultHandler: { image, info in
-                
-                //고품질 사진 확인
-                if let complete = (info?["PHImageResultIsDegradedKey"] as? Bool) {
-                    if !complete {
-                        if let image = image {
-                            let cropViewController = Mantis.cropViewController(image: image)
-                            cropViewController.delegate = self
-                            cropViewController.modalPresentationStyle = .fullScreen
-                            self.present(cropViewController, animated: true)
-                        }
-                    }
-                }
-            })
-        }
     }
     
     func photoPickerDidCancel() {

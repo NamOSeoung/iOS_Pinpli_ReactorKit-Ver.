@@ -11,7 +11,7 @@ import ReactorKit
 import RxCocoa
 import RxSwift
 
-//검색
+//검색 첫화면
 class SearchVC:BaseViewController,View {
 
     let searchView = SearchView()
@@ -35,6 +35,7 @@ class SearchVC:BaseViewController,View {
         let isAreaSecondName = searchView.areaSecondName.filter{$0.count > 0}
         let isLocationDenined = searchView.locationDenined.filter{$0}
         let isCurrentLocation = searchView.currentLocation.filter{$0 != nil} //현재 좌표 Observe
+        let isSearchKeywordMove = searchView.searchKeywordMoveEvent.filter{$0}
         
         isAreaFirstCode
             .distinctUntilChanged() //코드값 바뀔때만 호출
@@ -56,6 +57,12 @@ class SearchVC:BaseViewController,View {
                 }
             }.disposed(by: disposeBag)
         
+        isSearchKeywordMove.bind{[weak self] result in
+            let searchKeywordVC = SearchKeywordVC()
+            searchKeywordVC.modalPresentationStyle = .fullScreen
+            self?.present(searchKeywordVC, animated: true, completion: nil)
+        }.disposed(by: disposeBag)
+        
         /* */
         
         isCurrentLocation
@@ -66,6 +73,7 @@ class SearchVC:BaseViewController,View {
                 ]
                 reactor.action.onNext(.kakaoLocation(params))
             }.disposed(by: disposeBag)
+        
         
         /* Reactor Action */
         reactor.action.onNext(.firstArea)

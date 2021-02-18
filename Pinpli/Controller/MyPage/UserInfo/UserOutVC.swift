@@ -45,9 +45,13 @@ class UserOutVC:BaseViewController {
         alert.setValue(NSAttributedString(string: alert.message!, attributes: [NSAttributedString.Key.font : UIFont.systemFont(ofSize: 13,weight: UIFont.Weight.regular),NSAttributedString.Key.foregroundColor :UIColor.black]), forKey: "attributedMessage")
         
         let subview = (alert.view.subviews.first?.subviews.first?.subviews.first!)! as UIView
-        //
+        
         alert.addAction(UIAlertAction(title: "처음으로", style: .cancel, handler: { (action:UIAlertAction!) in
-            
+            //탈퇴 성공 후 root초기화
+            let storyboard = UIStoryboard.init(name: "Main", bundle: nil)
+            let vc = storyboard.instantiateViewController(withIdentifier: "RootVC") as! RootVC
+        
+            UIApplication.shared.windows.filter {$0.isKeyWindow}.first?.rootViewController = vc
         }))
         subview.backgroundColor = UIColor.white
         present(alert, animated: true)

@@ -53,6 +53,7 @@ class SearchView: BaseView {
     var tableCtrl:BehaviorRelay<Bool> = BehaviorRelay.init(value: Bool())
     var locationDenined:BehaviorRelay<Bool> = BehaviorRelay.init(value: false) //현재 위치 권한체크
     var currentLocation:BehaviorRelay<(x:Double, y:Double)?> = BehaviorRelay.init(value: nil) //현재 좌표
+    var searchKeywordMoveEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
     var disposeBag = DisposeBag()
     
     //검색 바 감싸는 뷰
@@ -92,6 +93,8 @@ class SearchView: BaseView {
     lazy var shopImage: UIImageView = {
         let image = UIImageView()
         image.image = UIImage(named: "shop")
+        image.isUserInteractionEnabled = true
+        image.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(searchKeywordMove(_:))))
         return image
     }()
     
@@ -447,6 +450,10 @@ class SearchView: BaseView {
         searchKeywordTF.text = ""
         areaSearchList.removeAll()
         tableCtrl.accept(true)
+    }
+    
+    @objc func searchKeywordMove(_ gesture:UITapGestureRecognizer) {
+        searchKeywordMoveEvent.accept(true)
     }
     
     //gps 퍼미션 체크

@@ -175,6 +175,7 @@ class MyPageLoginView: BaseView {
     var disposeBag = DisposeBag()
     var qnaDeleteEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
     let questionView = QuestionView()
+    let blackListView = BlackListView()
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
@@ -372,7 +373,25 @@ class MyPageLoginView: BaseView {
         myInfoEvent.accept(true)
     }
     
+    //클릭 이벤트 전체 초기화
+    private func clickEventInit() {
+        profileEditEvent.accept(false)
+        nickNameEditEvent.accept(false)
+        myInfoEvent.accept(false)
+        myReviewEvent.accept(false)
+        blackListEvent.accept(false)
+        questionEvent.accept(false)
+        commonSettngsEvent.accept(false)
+        serviceTermsEvent.accept(false)
+        privacyTermsEvent.accept(false)
+        faqEvent.accept(false)
+        noticeEvent.accept(false)
+        questionWriteEvent.accept(false)
+        qnaDeleteEvent.accept(false)
+    }
+    
     func contentsSetting(tabGubun:Int) {
+        clickEventInit()
         for view in subviews {
             if view == contentsWrap {
                 for child in view.subviews {
@@ -410,7 +429,7 @@ class MyPageLoginView: BaseView {
     }
     //블랙리스트
     func blackListTab() {
-        let blackListView = BlackListView()
+        
         contentsWrap.addSubview(blackListView.blackListReviewGubunWrap)
         contentsWrap.addSubview(blackListView.blackListContentsSelectWrap)
         blackListView.blackListReviewGubunWrap.snp.makeConstraints { (make) in
@@ -427,28 +446,13 @@ class MyPageLoginView: BaseView {
             make.bottom.equalToSuperview().offset(-bottomRatio)
             make.height.equalTo(height)
         }
-        
-        blackListView.youtubeWrap.rx.tapGesture().asDriver()
-            .drive(onNext:{ result in
-                blackListView.reviewSelectBottomSetting(reviewGubun: 0)
-            }).disposed(by: disposeBag)
-        blackListView.naverWrap.rx.tapGesture().asDriver()
-            .drive(onNext:{ result in
-                blackListView.reviewSelectBottomSetting(reviewGubun: 1)
-            }).disposed(by: disposeBag)
-        blackListView.tistoryWrap.rx.tapGesture().asDriver()
-            .drive(onNext:{ result in
-                blackListView.reviewSelectBottomSetting(reviewGubun: 2)
-            }).disposed(by: disposeBag)
-        
-        blackListView.writerWrap.rx.tapGesture().asDriver().skip(1)
-            .drive(onNext:{ result in
-                blackListView.blackListContentsSelectSetting(gubun: 0)
-            }).disposed(by: disposeBag)
-        blackListView.postWrap.rx.tapGesture().asDriver().skip(1)
-            .drive(onNext:{ result in
-                blackListView.blackListContentsSelectSetting(gubun: 1)
-            }).disposed(by: disposeBag)
+        blackListView.writerGL.colorSetting(r: 255, g: 255, b: 255, alpha: 1)
+        blackListView.postGL.colorSetting(r: 0, g: 0, b: 0, alpha: 1)
+        blackListView.youtubeWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(blackListTap(_:))))
+        blackListView.naverWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(blackListTap(_:))))
+        blackListView.tistoryWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(blackListTap(_:))))
+        blackListView.writerWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(blackListTap(_:))))
+        blackListView.postWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(blackListTap(_:))))
     }
     
     //1:1문의
@@ -472,14 +476,7 @@ class MyPageLoginView: BaseView {
             questionView.questionListTV.delegate = self
         }
         questionView.questionIsEmptyCtrl(questionCnt: 1)
-
-        questionView.managerQuestionWrap.rx.tapGesture().asDriver()
-            .skip(1)
-            .drive(onNext:{ [weak self] result in
-                result.view?.showAnimation { [weak self] in
-                    self?.questionWriteEvent.accept(true)
-                }
-            }).disposed(by: disposeBag)
+        questionView.managerQuestionWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(questionTap(_:))))
     }
     
     //일반 설정
@@ -527,25 +524,45 @@ class MyPageLoginView: BaseView {
             make.top.equalTo(commonSettingsView.noticeWrap.snp.bottom).offset(topRatio)
         }
         
-        commonSettingsView.serviceTermsWrap.rx.tapGesture().asDriver()
-            .drive(onNext:{ [weak self] result in
-                self?.serviceTermsEvent.accept(true)
-            }).disposed(by: disposeBag)
-        commonSettingsView.privacyTermsWrap.rx.tapGesture().asDriver()
-            .drive(onNext:{ [weak self] result in
-                self?.privacyTermsEvent.accept(true)
-            }).disposed(by: disposeBag)
-        commonSettingsView.faqWrap.rx.tapGesture().asDriver()
-            .drive(onNext:{ [weak self] result in
-                self?.faqEvent.accept(true)
-            }).disposed(by: disposeBag)
-        commonSettingsView.noticeWrap.rx.tapGesture().asDriver()
-            .drive(onNext:{ [weak self] result in
-                self?.noticeEvent.accept(true)
-            }).disposed(by: disposeBag)
+        commonSettingsView.serviceTermsWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(commonSettingTap(_:))))
+        commonSettingsView.privacyTermsWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(commonSettingTap(_:))))
+        commonSettingsView.faqWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(commonSettingTap(_:))))
+        commonSettingsView.noticeWrap.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(commonSettingTap(_:))))
     }
     
+    @objc private func blackListTap(_ gesture:UITapGestureRecognizer) {
+        if let tag = gesture.view?.tag {
+            if tag == 0 { //유튜브 블랙리스트
+                blackListView.reviewSelectBottomSetting(reviewGubun: 0)
+            }else if tag == 1 { //네이버 블랙리스트
+                blackListView.reviewSelectBottomSetting(reviewGubun: 1)
+            }else if tag == 2 { //티스토리 블랙리스트
+                blackListView.reviewSelectBottomSetting(reviewGubun: 2)
+            }else if tag == 3 { //작성자 블랙리스트
+                blackListView.blackListContentsSelectSetting(gubun: 0)
+            }else { //게시글 블랙리스트
+                blackListView.blackListContentsSelectSetting(gubun: 1)
+            }
+        }
+    }
     
+    @objc private func questionTap(_ gesture:UITapGestureRecognizer) {
+        questionWriteEvent.accept(true)
+    }
+    
+    @objc private func commonSettingTap(_ gesture:UITapGestureRecognizer) {
+        if let tag = gesture.view?.tag {
+            if tag == 0 { //서비스 이용약관
+                serviceTermsEvent.accept(true)
+            }else if tag == 1 { //개인정보 처리방침
+                privacyTermsEvent.accept(true)
+            }else if tag == 2 { //자주하는질문
+                faqEvent.accept(true)
+            }else { //공지사항
+                noticeEvent.accept(true)
+            }
+        }
+    }
 }
 
 extension MyPageLoginView: UITableViewDelegate, UITableViewDataSource {

@@ -191,7 +191,7 @@ class MyPageLogoutView: BaseView {
             make.centerY.equalTo(summaryWrap)
             make.leading.equalTo(defaultProfileImage.snp.trailing).offset(10)
             make.trailing.equalTo(-22)
-            summaryGL.font = loginGL.font.withSize(fontSize)
+            summaryGL.font = summaryGL.font.withSize(fontSize)
         }
         summaryBottomLine.snp.makeConstraints{ make in
             make.bottom.equalTo(0)

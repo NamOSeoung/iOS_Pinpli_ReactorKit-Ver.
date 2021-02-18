@@ -7,6 +7,8 @@
 
 import UIKit
 import RxCocoa
+import RxKeyboard
+import RxSwift
 
 class ReviewWriteView: BaseView {
     lazy var reviewWriteHeaderWrap:UIView = {
@@ -78,6 +80,7 @@ class ReviewWriteView: BaseView {
         label.text = "이전 단계"
         label.font = UIFont(name: "AppleSDGothicNeo-SemiBold", size: 18)
         label.colorSetting(r: 0, g: 0, b: 0, alpha: 1)
+        label.textAlignment = .center
         return label
     }()
     lazy var previousStep2Wrap:UIView = {
@@ -109,13 +112,14 @@ class ReviewWriteView: BaseView {
         view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(nextStepUIChange(_:))))
         return view
     }()
-    
+    let disposeBag = DisposeBag()
     var backEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
-    
+    var imageSelectEvent:BehaviorRelay<Bool> = BehaviorRelay.init(value: false)
+    var nextStepParentConstraint:NSLayoutConstraint!
+    var reviewContentsFocusFlag:Bool = false
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
     
     override init(frame: CGRect) {
         super .init(frame: frame)
@@ -162,8 +166,9 @@ class ReviewWriteView: BaseView {
         }
         nextStepParentWrap.snp.makeConstraints{ make in
             let height = aspectRatio(standardSize: 100)
-            make.height.equalTo(height)
+            nextStepParentConstraint = make.height.equalTo(height).constraint.layoutConstraints[0]
             make.leading.bottom.trailing.equalToSuperview()
+            
         }
         nextStepWrap.snp.makeConstraints{ make in
             make.leading.top.trailing.bottom.equalToSuperview()
@@ -177,57 +182,106 @@ class ReviewWriteView: BaseView {
         }
     }
     
+    @objc private func imageClickEvent(_ sender: UIButton) {
+        imageSelectEvent.accept(true)
+    }
+    
     @objc func backClickEvent(_ gesture:UITapGestureRecognizer) {
         backEvent.accept(true)
     }
     
     @objc func nextStepUIChange(_ gesture:UITapGestureRecognizer) {
         let tag = gesture.view?.tag ?? 0
-        for view in subviews {
-            if view == nextStepParentWrap {
-                for child in view.subviews {
-                    child.removeFromSuperview()
+        
+        
+        
+        if tag < 3 {
+            
+            for view in subviews {
+                if view == nextStepParentWrap {
+                    for child in view.subviews {
+                        child.removeFromSuperview()
+                    }
                 }
             }
+            
+            pageCtrl.currentPage = tag
+            reviewContentsCV.scrollToItem(at: IndexPath(row: tag, section: 0), at: .left, animated: true)
+            
+            if tag == 0 {
+                nextStepParentWrap.addSubview(nextStepWrap)
+                nextStepWrap.addSubview(nextStepGL)
+                nextStepWrap.snp.makeConstraints{ make in
+                    make.leading.top.bottom.trailing.equalToSuperview()
+                }
+                nextStepGL.snp.makeConstraints{ make in
+                    let fontSize = aspectRatio(standardSize: 18)
+                    let topRatio = constraintRatio(direction: .top, standardSize: 20)
+                    nextStepGL.font = nextStepGL.font.withSize(fontSize)
+                    make.leading.trailing.equalToSuperview()
+                    make.top.equalTo(topRatio)
+                }
+            } else if tag == 1 {
+                nextStepParentWrap.addSubview(previousStep2Wrap)
+                nextStepParentWrap.addSubview(nextStep2Wrap)
+                previousStep2Wrap.addSubview(previousStepGL)
+                nextStep2Wrap.addSubview(nextStepGL)
+                previousStep2Wrap.snp.makeConstraints{ make in
+                    make.top.leading.bottom.equalToSuperview()
+                    make.width.equalTo((currentViewSize.width/2) - 0.5)
+                }
+                previousStepGL.snp.makeConstraints{ make in
+                    let fontSize = aspectRatio(standardSize: 18)
+                    let topRatio = constraintRatio(direction: .top, standardSize: 20)
+                    previousStepGL.font = previousStepGL.font.withSize(fontSize)
+                    make.leading.trailing.equalToSuperview()
+                    make.top.equalTo(topRatio)
+                }
+                nextStep2Wrap.snp.makeConstraints{ make in
+                    make.leading.equalTo(previousStep2Wrap.snp.trailing).offset(0.5)
+                    make.top.bottom.trailing.equalToSuperview()
+                }
+                nextStepGL.snp.makeConstraints{ make in
+                    let fontSize = aspectRatio(standardSize: 18)
+                    let topRatio = constraintRatio(direction: .top, standardSize: 20)
+                    nextStepGL.font = nextStepGL.font.withSize(fontSize)
+                    nextStepGL.text = "다음단계로 넘어가기"
+                    make.leading.trailing.equalToSuperview()
+                    make.top.equalTo(topRatio)
+                }
+            } else if tag == 2 {
+                nextStepParentWrap.addSubview(previousStep3Wrap)
+                nextStepParentWrap.addSubview(nextStep3Wrap)
+                previousStep3Wrap.addSubview(previousStepGL)
+                nextStep3Wrap.addSubview(nextStepGL)
+                previousStep3Wrap.snp.makeConstraints{ make in
+                    make.top.leading.bottom.equalToSuperview()
+                    make.width.equalTo((currentViewSize.width/2) - 0.5)
+                }
+                previousStepGL.snp.makeConstraints{ make in
+                    let fontSize = aspectRatio(standardSize: 18)
+                    let topRatio = constraintRatio(direction: .top, standardSize: 20)
+                    previousStepGL.font = previousStepGL.font.withSize(fontSize)
+                    make.leading.trailing.equalToSuperview()
+                    make.top.equalTo(topRatio)
+                }
+                nextStep3Wrap.snp.makeConstraints{ make in
+                    make.leading.equalTo(previousStep3Wrap.snp.trailing).offset(0.5)
+                    make.top.bottom.trailing.equalToSuperview()
+                }
+                nextStepGL.snp.makeConstraints{ make in
+                    let fontSize = aspectRatio(standardSize: 18)
+                    let topRatio = constraintRatio(direction: .top, standardSize: 20)
+                    nextStepGL.font = nextStepGL.font.withSize(fontSize)
+                    nextStepGL.text = "리뷰 작성 완료"
+                    make.leading.trailing.equalToSuperview()
+                    make.top.equalTo(topRatio)
+                }
+            }
+        }else { // tag == 3
+            
         }
-        pageCtrl.currentPage = tag
-        reviewContentsCV.scrollToItem(at: IndexPath(row: tag, section: 0), at: .left, animated: true)
-        if tag == 0 {
-            nextStepParentWrap.addSubview(nextStepWrap)
-            nextStepWrap.addSubview(nextStepGL)
-            nextStepWrap.snp.makeConstraints{ make in
-                make.leading.top.bottom.trailing.equalToSuperview()
-            }
-            nextStepGL.snp.makeConstraints{ make in
-                let fontSize = aspectRatio(standardSize: 18)
-                let topRatio = constraintRatio(direction: .top, standardSize: 20)
-                nextStepGL.font = nextStepGL.font.withSize(fontSize)
-                make.leading.trailing.equalToSuperview()
-                make.top.equalTo(topRatio)
-            }
-        } else if tag == 1 {
-            nextStepParentWrap.addSubview(previousStep2Wrap)
-            nextStepParentWrap.addSubview(nextStep2Wrap)
-            previousStep2Wrap.snp.makeConstraints{ make in
-                make.top.leading.bottom.equalToSuperview()
-                make.width.equalTo((currentViewSize.width/2) - 0.5)
-            }
-            nextStep2Wrap.snp.makeConstraints{ make in
-                make.leading.equalTo(previousStep2Wrap.snp.trailing).offset(0.5)
-                make.top.bottom.trailing.equalToSuperview()
-            }
-        } else {
-            nextStepParentWrap.addSubview(previousStep3Wrap)
-            nextStepParentWrap.addSubview(nextStep3Wrap)
-            previousStep3Wrap.snp.makeConstraints{ make in
-                make.top.leading.bottom.equalToSuperview()
-                make.width.equalTo((currentViewSize.width/2) - 0.5)
-            }
-            nextStep3Wrap.snp.makeConstraints{ make in
-                make.leading.equalTo(previousStep3Wrap.snp.trailing).offset(0.5)
-                make.top.bottom.trailing.equalToSuperview()
-            }
-        }
+        endEditing(true) //키보드 내리기
     }
 }
 extension ReviewWriteView: UICollectionViewDelegate, UICollectionViewDataSource,UICollectionViewDelegateFlowLayout {
@@ -241,18 +295,18 @@ extension ReviewWriteView: UICollectionViewDelegate, UICollectionViewDataSource,
             return cell!
         }else if indexPath.row == 1 {
             let cell = (collectionView.dequeueReusableCell(withReuseIdentifier: "ReviewWriteStepCell02", for:indexPath) as? ReviewWriteStepCell02)
-//            cell?.noPhotoUISetting(view: nextStepParentWrap)
+            cell?.addPhotoBtn.addTarget(self, action: #selector(imageClickEvent), for: .touchUpInside)
+            cell?.noPhotoUISetting(x: nextStepParentWrap.frame.height)
             return cell!
         }else {
             let cell = (collectionView.dequeueReusableCell(withReuseIdentifier: "ReviewWriteStepCell03", for:indexPath) as? ReviewWriteStepCell03)
+            cell?.parentViewSetting(parentView: self as Any)
             return cell!
         }
-        
-       
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print(indexPath)
+        endEditing(true) //키보드 내리기
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
