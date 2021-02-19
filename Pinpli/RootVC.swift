@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import KakaoModule
 
 class RootVC: BaseViewController {
     
@@ -35,8 +34,6 @@ class RootVC: BaseViewController {
     }
     
     private func kakaoLogin() {
-        let aa = KakaoLogin()
-        aa.login()
 //
 //        // 카카오톡 설치 여부 확인
 //        if (AuthApi.isKakaoTalkLoginAvailable()) {
