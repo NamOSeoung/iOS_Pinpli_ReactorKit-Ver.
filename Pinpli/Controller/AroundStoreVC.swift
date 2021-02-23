@@ -94,7 +94,7 @@ class AroundStoreVC:BaseViewController,View {
     
     //지역 호출 거절 시 이벤트 method
     func locationAccessDeniedAlert() {
-        let alert = UIAlertController(title: "위치 접근 권한 허용", message: "\n더 정확한 검색을 위해서\n위치 접근 권한을 허용해주세요 :)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "내 주변에 있는 맛집을 알아봐요 😝", message: "\n더 정확한 검색을 위해서\n위치 접근 권한을 허용해주세요 :)", preferredStyle: .alert)
 
         // Change font and color of title
         
@@ -104,7 +104,11 @@ class AroundStoreVC:BaseViewController,View {
         
         let subview = (alert.view.subviews.first?.subviews.first?.subviews.first!)! as UIView
         
-        alert.addAction(UIAlertAction(title: "확인", style: .cancel, handler: { (action:UIAlertAction!) in
+        alert.addAction(UIAlertAction(title: "취소하기", style: .cancel, handler: { (action:UIAlertAction!) in
+
+        }))
+        
+        alert.addAction(UIAlertAction(title: "허용하기", style: .default, handler: { (action:UIAlertAction!) in
             if let settingUrl = URL(string:UIApplication.openSettingsURLString) {
                 UIApplication.shared.open(settingUrl)
             } else {
