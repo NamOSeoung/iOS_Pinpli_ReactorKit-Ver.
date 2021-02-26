@@ -16,7 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
 //        Thread.sleep(forTimeInterval: 2.0)
         
-        KakaoSDKCommon.initSDK(appKey: "94f3a8d1a642e3793ea967088c70cc98")
+        KakaoSDKCommon.initSDK(appKey: PlistService().getSocialPlistInfo(keyName: "KAKAO_IOS_KEY"))
+
         return true
     }
 
