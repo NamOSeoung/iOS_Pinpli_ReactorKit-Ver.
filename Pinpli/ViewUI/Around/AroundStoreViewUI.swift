@@ -24,6 +24,22 @@ class AroundStoreViewUI: BaseView {
         return label
     }()
     
+    lazy var storeHeaderWrap: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
+    
+    lazy var storeHeaderGL:UILabel = {
+        let label = UILabel()
+        label.text = "서울 맛집 여기는 어때요?"
+        label.colorSetting(r: 31, g: 31, b: 31, alpha: 1)
+        label.font = UIFont(name: "AppleSDGothicNeo-Bold", size: 20)
+        label.numberOfLines = 2
+        label.setLinespace(spacing: 8)
+        return label
+    }()
+    
     lazy var storeSearchWrap: UIView = {
         let view = UIView()
         return view
@@ -342,7 +358,7 @@ class AroundStoreViewUI: BaseView {
     var reviewMoreEvent:BehaviorRelay<Int?> = BehaviorRelay.init(value: nil) //리뷰 더보기 이벤트
     
     var dummyList:[String] = ["1","2","3","4","1","2","3","4","1","2","3","4"]
-    
+    weak var storeHeaderHeight:NSLayoutConstraint!
     weak var reviewHeaderHeight:NSLayoutConstraint!
     weak var youtubeReviewWrapHeight:NSLayoutConstraint!
     weak var naverReviewWrapHeight:NSLayoutConstraint!
@@ -373,6 +389,8 @@ class AroundStoreViewUI: BaseView {
         addSubview(scrollView)
         /* */
         /* 가게 리스트 */
+        scrollView.addSubview(storeHeaderWrap)
+        storeHeaderWrap.addSubview(storeHeaderGL)
         scrollView.addSubview(storeListWrap)
         storeListWrap.addSubview(storeListCV)
         storeListWrap.addSubview(storeMoreBtn)
@@ -454,11 +472,29 @@ class AroundStoreViewUI: BaseView {
             make.bottom.equalTo(safeAreaLayoutGuide)
         }
         
+        storeHeaderWrap.snp.makeConstraints { (make) in
+            let width = currentViewSize.width
+            let height = aspectRatio(standardSize: 48)
+            storeHeaderHeight = make.height.equalTo(height).constraint.layoutConstraints[0]
+            make.leading.equalTo(0)
+            make.top.equalToSuperview()
+            make.width.equalTo(width)
+        }
+        
+        storeHeaderGL.snp.makeConstraints { (make) in
+            let fontSize = aspectRatio(standardSize: 20)
+            let topRatio = constraintRatio(direction: .top, standardSize: 20)
+            storeHeaderGL.font = storeHeaderGL.font.withSize(fontSize)
+            make.top.equalTo(topRatio)
+            make.leading.equalTo(22)
+            make.trailing.equalTo(-22)
+        }
+        
         storeListWrap.snp.makeConstraints{ make in
             let width = currentViewSize.width
             let height = aspectRatio(standardSize: 283)
             make.leading.equalTo(0)
-            make.top.equalTo(scrollView)
+            make.top.equalTo(storeHeaderWrap.snp.bottom)
             make.width.equalTo(width)
             make.height.equalTo(height)
         }
@@ -697,11 +733,22 @@ class AroundStoreViewUI: BaseView {
             pinpliMoreBtn.titleEdgeInsets.right = 22
         }
         /* */
-        
+        currentLocationSetting(gubun: true)
         youtubeIsEmptySetting(gubun: false)
         naverIsEmptySetting(gubun: true)
         tistoryIsEmptySetting(gubun: false)
         pinpliIsEmptySetting(gubun: true)
+    }
+    
+    func currentLocationSetting(gubun:Bool) { //현위치 정보 제공, 미제공 시 storeHeader 세팅
+        if gubun {
+            storeHeaderHeight?.constant = 0
+            storeHeaderWrap.isHidden = true
+        }else {
+            let height = aspectRatio(standardSize: 48)
+            storeHeaderHeight?.constant = height
+            storeHeaderWrap.isHidden = false
+        }
     }
     
     func youtubeIsEmptySetting(gubun:Bool) {
