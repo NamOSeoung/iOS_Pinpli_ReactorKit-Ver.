@@ -22,7 +22,9 @@ class HeaderCommon {
             "X-Request-Id":requestUUID
         ]
         
-        headers.add(name: "Authorization", value: "KakaoAK " + "502937ada9f6a20650a16263ad12898a")
+        if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
+            headers.add(name: "Authorization", value: accessToken)
+        }
 
         return headers
     }
