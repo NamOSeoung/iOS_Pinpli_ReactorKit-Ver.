@@ -23,7 +23,7 @@ class HeaderCommon {
         ]
         
         if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
-            headers.add(name: "Authorization", value: accessToken)
+            headers.add(name: "Authorization", value: "Bearer " + accessToken)
         }
 
         return headers
