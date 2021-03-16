@@ -19,7 +19,7 @@ struct QuestionListRPModelData : Codable {
 
 struct QuestionModel : Codable {
     let content : String?
-    let createdAt : String?
+    let createdAt : Int?
     let questionId : String?
     let status : String?
     
