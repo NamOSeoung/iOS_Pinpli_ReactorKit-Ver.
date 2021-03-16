@@ -7,6 +7,7 @@
 
 import Foundation
 
+//FAQ 전용 ResponseModel
 struct FAQRPModel : Codable {
     
     let data : FAQRPModelData?
@@ -28,7 +29,7 @@ struct FAQRPModelData : Codable {
 struct Faq : Codable {
     
     let content : String?
-    let createdAt : String?
+    let createdAt : Int?
     let faqId : String?
     let subject : String?
     
