@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 //Kakao 현재위치 조회
-class KakaoLocationAPIService:APIUrlService,APIRequestService,ModelToDictionary {
+class KakaoLocationAPIService:APIUrlService,KakaoAPIRequestService,ModelToDictionary {
     
     typealias NetworkData = KakaoLocationRPModel
 
